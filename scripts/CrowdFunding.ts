@@ -1,3 +1,5 @@
+import { network } from "hardhat";
+
 const { ethers } = require("hardhat");
 const { expect } = require("chai");
 
@@ -9,7 +11,7 @@ async function main() {
 
     // Deploy ERC20 Token
     const Token = await ethers.getContractFactory("ERC20");
-    const token = await Token.deploy("TestToken", "TT", ethers.parseEther("1000000")); // 1M tokens
+    const token = await Token.deploy("TestToken", "TT", 18, ethers.parseEther("1000000")); // 1M tokens
     await token.waitForDeployment();
     const tokenAddress = await token.getAddress();
     console.log("Token deployed to:", tokenAddress);
@@ -63,8 +65,8 @@ async function main() {
       console.log("Campaign successful - Organizer claimed funds");
     } else {
       // Failed funding scenario - wait for end date
-    //   await network.provider.send("evm_increaseTime", [7 * 24 * 60 * 60 + 1]); // Advance time past end date
-    //   await network.provider.send("evm_mine");
+       await network.provider.send("evm_increaseTime", [7 * 24 * 60 * 60 + 1]); // Advance time past end date
+       await network.provider.send("evm_mine");
 
       // Donors can claim refunds
       await crowdfunding.connect(user2).ClaimRefund(0);
